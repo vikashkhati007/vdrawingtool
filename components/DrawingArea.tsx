@@ -10,6 +10,8 @@ const DrawingArea = () => {
   const [activeColor, setActiveColor] = useState("white");
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [earserWidth, setEraserWidth] = useState(10);
+  const [activeTool, setActiveTool] = useState("pen");
+
   const canvasRef = useRef(null);
   const styles = {
     border: "0.0625rem solid #9c9c9c",
@@ -22,28 +24,35 @@ const DrawingArea = () => {
 
   const EraseCanvasFunction = () => {
     canvasRef.current?.eraseMode(earserWidth);
+    setActiveTool("eraser");
   };
 
   const StrokeFunction = () => {
     canvasRef.current?.eraseMode(false);
+    setActiveTool("pen");
   };
   const ResetCanvas = () => {
     canvasRef.current?.clearCanvas();
+    setActiveTool("reset");
   };
 
   return (
     <section>
-      <section className="absolute top-10 left-10 w-20 z-10 group rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden">
+      <section className="absolute top-10 left-10 w-20 z-10 group rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
         <ToolsContainer
           icon={PenBoxIcon}
           label="Pen"
           onClick={StrokeFunction}
+          value="pen"
+          className={activeTool === "pen" ? "bg-[#DBEA8D] text-primary" : ""}
         />
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
         <ToolsContainer
           icon={EraserIcon}
           label="Erase"
           onClick={EraseCanvasFunction}
+          value="eraser"
+          className={activeTool === "eraser" ? "bg-[#DBEA8D] text-primary" : ""}
         />
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
 
@@ -51,9 +60,11 @@ const DrawingArea = () => {
           icon={LucideRemoveFormatting}
           label="Reset"
           onClick={ResetCanvas}
+          value="reset"
+          className={activeTool === "reset" ? "bg-[#DBEA8D] text-primary" : ""}
         />
       </section>
-      <section className="absolute flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-10 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden">
+      <section className="absolute flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-10 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
         <div className="colorpickercontainer flex justify-center items-center gap-5">
           {Colors.map((color: any) => {
             return (
