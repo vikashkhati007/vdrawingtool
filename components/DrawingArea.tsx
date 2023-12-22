@@ -11,6 +11,7 @@ const DrawingArea = () => {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [earserWidth, setEraserWidth] = useState(10);
   const [activeTool, setActiveTool] = useState("pen");
+  const [image, setImage] = useState(null);
 
   const canvasRef = useRef(null);
   const styles = {
@@ -36,8 +37,19 @@ const DrawingArea = () => {
     setActiveTool("reset");
   };
 
+  const GetImage = () => {
+    canvasRef.current
+      ?.exportImage("/pen.svg")
+      .then((data) => {
+        setImage(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   return (
-    <section>
+    <section className="custom-coursor">
       <section className="absolute top-10 left-10 w-20 z-10 group rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
         <ToolsContainer
           icon={PenBoxIcon}
@@ -63,6 +75,7 @@ const DrawingArea = () => {
           value="reset"
           className={activeTool === "reset" ? "bg-[#DBEA8D] text-primary" : ""}
         />
+        <button onClick={GetImage}>Get Image</button>
       </section>
       <section className="absolute flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-10 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
         <div className="colorpickercontainer flex justify-center items-center gap-5">
