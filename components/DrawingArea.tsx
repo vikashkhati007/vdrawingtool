@@ -1,9 +1,17 @@
 "use client";
 import * as React from "react";
-import { Canvas, ReactSketchCanvas } from "react-sketch-canvas";
+import { ReactSketchCanvas } from "react-sketch-canvas";
 import { useState, useRef } from "react";
 import ToolsContainer from "./Tools/ToolsContainer";
-import { EraserIcon, LucideRemoveFormatting, PenBoxIcon } from "lucide-react";
+import {
+  ChevronDownSquare,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUpSquare,
+  EraserIcon,
+  LucideRemoveFormatting,
+  PenBoxIcon,
+} from "lucide-react";
 import { Colors } from "@/constant/Colors";
 
 const DrawingArea = () => {
@@ -12,8 +20,9 @@ const DrawingArea = () => {
   const [earserWidth, setEraserWidth] = useState(10);
   const [activeTool, setActiveTool] = useState("pen");
   const [image, setImage] = useState(null);
+  const [draweropen, setDrawerOpen] = useState(true);
 
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<any>(null);
   const styles = {
     border: "0.0625rem solid #9c9c9c",
     borderRadius: `0.5rem`,
@@ -37,15 +46,11 @@ const DrawingArea = () => {
     setActiveTool("reset");
   };
 
-  const GetImage = () => {
-    canvasRef.current
-      ?.exportImage("/pen.svg")
-      .then((data) => {
-        setImage(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  const undoFunction = () => {
+    canvasRef.current?.undo();
+  };
+  const redoFunction = () => {
+    canvasRef.current?.redo();
   };
 
   return (
@@ -75,9 +80,27 @@ const DrawingArea = () => {
           value="reset"
           className={activeTool === "reset" ? "bg-[#DBEA8D] text-primary" : ""}
         />
-        <button onClick={GetImage}>Get Image</button>
+        <hr className="w-full opacity-25 bg-[#BCB59F]" />
+        <div className="actioncontainer flex my-2 ">
+          <div
+            className="left cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
+            onClick={undoFunction}
+          >
+            <ChevronLeft size={30} />
+          </div>
+          <div
+            className="right cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
+            onClick={redoFunction}
+          >
+            <ChevronRight size={30} />
+          </div>
+        </div>
       </section>
-      <section className="absolute flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-10 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
+      <section
+        className={`absolute ${
+          draweropen ? "h-fit" : "h-10"
+        } flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-10 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}
+      >
         <div className="colorpickercontainer flex justify-center items-center gap-5">
           {Colors.map((color: any) => {
             return (
@@ -91,8 +114,15 @@ const DrawingArea = () => {
               />
             );
           })}
+          {!draweropen ? (
+            <ChevronDownSquare
+              onClick={() => {
+                setDrawerOpen(true);
+              }}
+              className="cursor-pointer"
+            />
+          ) : null}
         </div>
-
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
         <div className="ChangerWidthContainer flex justify-center items-center gap-2 flex-col">
           <div className="penstrokecontainer space-x-5">
@@ -116,6 +146,12 @@ const DrawingArea = () => {
             <label>erase width</label>
           </div>
         </div>
+        <ChevronUpSquare
+          onClick={() => {
+            setDrawerOpen(false);
+          }}
+          className="cursor-pointer"
+        />
       </section>
       <ReactSketchCanvas
         ref={canvasRef}
