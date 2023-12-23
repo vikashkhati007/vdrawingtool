@@ -19,7 +19,6 @@ const DrawingArea = () => {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [earserWidth, setEraserWidth] = useState(10);
   const [activeTool, setActiveTool] = useState("pen");
-  const [image, setImage] = useState(null);
   const [draweropen, setDrawerOpen] = useState(true);
 
   const canvasRef = useRef<any>(null);
