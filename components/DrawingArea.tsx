@@ -54,13 +54,13 @@ const DrawingArea = () => {
 
   return (
     <section className="custom-coursor">
-      <section className="absolute top-10 left-10 w-20 z-10 group rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
+      <section className="absolute top-10 left-10 w-20 z-10 rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
         <ToolsContainer
           icon={PenBoxIcon}
           label="Pen"
           onClick={StrokeFunction}
           value="pen"
-          className={activeTool === "pen" ? "bg-[#DBEA8D] text-primary" : ""}
+          className={activeTool === "pen" ? "bg-[#DBEA8D] text-black" : ""}
         />
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
         <ToolsContainer
@@ -68,7 +68,7 @@ const DrawingArea = () => {
           label="Erase"
           onClick={EraseCanvasFunction}
           value="eraser"
-          className={activeTool === "eraser" ? "bg-[#DBEA8D] text-primary" : ""}
+          className={activeTool === "eraser" ? "bg-[#DBEA8D] text-black" : ""}
         />
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
 
@@ -77,7 +77,7 @@ const DrawingArea = () => {
           label="Reset"
           onClick={ResetCanvas}
           value="reset"
-          className={activeTool === "reset" ? "bg-[#DBEA8D] text-primary" : ""}
+          className={activeTool === "reset" ? "bg-[#DBEA8D] text-black" : ""}
         />
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
         <div className="actioncontainer flex my-2 ">
