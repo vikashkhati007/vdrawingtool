@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUpSquare,
+  Download,
   EraserIcon,
   LucideRemoveFormatting,
   PenBoxIcon,
@@ -20,6 +21,7 @@ const DrawingArea = () => {
   const [earserWidth, setEraserWidth] = useState(10);
   const [activeTool, setActiveTool] = useState("pen");
   const [draweropen, setDrawerOpen] = useState(true);
+  const [image, setImage] = useState("");
 
   const canvasRef = useRef<any>(null);
   const styles = {
@@ -50,6 +52,19 @@ const DrawingArea = () => {
   };
   const redoFunction = () => {
     canvasRef.current?.redo();
+  };
+
+  const GetImageFunction = () => {
+    canvasRef.current
+      ?.exportImage("png")
+      .then((dataUrl: any) => {
+        setImage(dataUrl);
+        console.log(dataUrl);
+        // Use the data URL as needed
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -94,11 +109,37 @@ const DrawingArea = () => {
             <ChevronRight size={30} />
           </div>
         </div>
+        <hr className="w-full opacity-25 bg-[#BCB59F]" />
+        <div
+          className="downloadcontainer flex flex-col justify-center items-center p-3"
+          typeof="button"
+        >
+          <Download />
+          {image === "" ? (
+            <>
+              <label
+                className="text-sm text-center cursor-pointer"
+                onClick={GetImageFunction}
+              >
+                Save Image
+              </label>
+            </>
+          ) : (
+            <a
+              className="cursor-pointer text-sm"
+              download="save.png"
+              href={image}
+              onClick={() => setImage("")}
+            >
+              Download
+            </a>
+          )}
+        </div>
       </section>
       <section
         className={`absolute ${
           draweropen ? "h-fit" : "h-10"
-        } flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-10 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}
+        } flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-40 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}
       >
         <div className="colorpickercontainer flex justify-center items-center gap-5">
           {Colors.map((color: any) => {
