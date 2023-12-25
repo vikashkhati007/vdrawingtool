@@ -1,5 +1,3 @@
-Certainly! Based on the information you've provided, here's a README.md template for your vdrawingtool:
-
 ### README.md
 
 ```markdown
