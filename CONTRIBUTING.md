@@ -14,8 +14,6 @@ Thank you for considering contributing to the DrawingTool website! We appreciate
 4. Push to your branch: `git push origin feature/your-feature`.
 5. Open a pull request to the `main` branch.
 
-Please ensure your pull request adheres to our [Code of Conduct](CODE_OF_CONDUCT.md).
-
 ## Reporting Bugs
 
 If you find a bug, please open an issue and provide as much detail as possible, including steps to reproduce.
@@ -28,8 +26,5 @@ Feel free to open an issue to suggest new features or improvements.
 
 Follow the existing code style and conventions in the project. Consider running linting tools before submitting your changes.
 
-## Code of Conduct
-
-Read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
 Happy coding!
