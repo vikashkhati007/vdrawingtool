@@ -67,6 +67,14 @@ const DrawingArea = () => {
       });
   };
 
+  // New state variables for canvas dimensions
+  const [canvasWidth, setCanvasWidth] = useState(800);//default
+  const [canvasHeight, setCanvasHeight] = useState(600);//default
+
+  // Create a new key whenever canvas dimensions change
+  const canvasKey = `${canvasWidth}-${canvasHeight}`;
+
+
   return (
     <section className="custom-coursor">
       <section className="absolute top-10 left-10 w-20 z-10 rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
@@ -136,6 +144,7 @@ const DrawingArea = () => {
           )}
         </div>
       </section>
+
       <section
         className={`absolute ${
           draweropen ? "h-fit" : "h-10"
@@ -163,6 +172,7 @@ const DrawingArea = () => {
             />
           ) : null}
         </div>
+
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
         <div className="ChangerWidthContainer flex justify-center items-center gap-2 flex-col">
           <div className="penstrokecontainer space-x-5">
@@ -193,16 +203,46 @@ const DrawingArea = () => {
           className="cursor-pointer"
         />
       </section>
+{/* Section for canvas dimensions */}
+<section 
+className={`absolute ${
+          draweropen ? "h-fit" : "h-10"
+        } flex flex-col flex-1 items-center gap-2 top-2 left0 right-0 z-20 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}>
+           <label>
+          Canvas Width (px):
+          <input
+            type="number"
+            value={canvasWidth}
+            onChange={(e) => setCanvasWidth(parseInt(e.target.value))}
+          />
+        </label>
+        <label>
+          Canvas Height (px):
+          <input
+            type="number"
+            value={canvasHeight}
+            onChange={(e) => setCanvasHeight(parseInt(e.target.value))}
+          />
+        </label>
+       
+      </section>
+
+<section
+        className={`absolute h-screen w-screen flex items-center justify-center`}// styles for canvas to be always be on center
+      >
       <ReactSketchCanvas
         ref={canvasRef}
         style={styles}
-        width="100vw"
-        height="100vh"
+        width={`${canvasWidth}px`}
+        height={`${canvasHeight}px`}//key for react size
         strokeWidth={strokeWidth}
         eraserWidth={earserWidth}
         strokeColor={activeColor}
         canvasColor="bg-background"
+        
       />
+      </section>
+    
     </section>
   );
 };
