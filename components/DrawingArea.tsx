@@ -204,7 +204,7 @@ const DrawingArea = () => {
         />
       </section>
 {/* Section for canvas dimensions */}
-<section 
+<section
 className={`absolute ${
           draweropen ? "h-fit" : "h-10"
         } flex flex-col flex-1 items-center gap-2 top-2 left0 right-0 z-20 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}>
@@ -224,7 +224,7 @@ className={`absolute ${
             onChange={(e) => setCanvasHeight(parseInt(e.target.value))}
           />
         </label>
-       
+
       </section>
 
 <section
@@ -239,10 +239,10 @@ className={`absolute ${
         eraserWidth={earserWidth}
         strokeColor={activeColor}
         canvasColor="bg-background"
-        
+
       />
       </section>
-    
+
     </section>
   );
 };
