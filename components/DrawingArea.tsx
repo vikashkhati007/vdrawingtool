@@ -12,6 +12,7 @@ import {
   EraserIcon,
   LucideRemoveFormatting,
   PenBoxIcon,
+  Menu,
 } from "lucide-react";
 import { Colors } from "@/constant/Colors";
 
@@ -20,14 +21,29 @@ const DrawingArea = () => {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [earserWidth, setEraserWidth] = useState(10);
   const [activeTool, setActiveTool] = useState("pen");
-  const [draweropen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(true);
   const [image, setImage] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+  const [showTools, setShowTools] = useState(false);
 
   const canvasRef = useRef<any>(null);
   const styles = {
     border: "0.0625rem solid #9c9c9c",
     borderRadius: `0.5rem`,
   };
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleColorClick = (color: string) => {
     setActiveColor(color);
@@ -69,84 +85,93 @@ const DrawingArea = () => {
 
   return (
     <section className="custom-coursor">
-      <section className="absolute top-10 left-10 w-20 z-10 rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
-        <ToolsContainer
-          icon={PenBoxIcon}
-          label="Pen"
-          onClick={StrokeFunction}
-          value="pen"
-          className={activeTool === "pen" ? "bg-[#DBEA8D] text-black" : ""}
-        />
-        <hr className="w-full opacity-25 bg-[#BCB59F]" />
-        <ToolsContainer
-          icon={EraserIcon}
-          label="Erase"
-          onClick={EraseCanvasFunction}
-          value="eraser"
-          className={activeTool === "eraser" ? "bg-[#DBEA8D] text-black" : ""}
-        />
-        <hr className="w-full opacity-25 bg-[#BCB59F]" />
-
-        <ToolsContainer
-          icon={LucideRemoveFormatting}
-          label="Reset"
-          onClick={ResetCanvas}
-          value="reset"
-          className={activeTool === "reset" ? "bg-[#DBEA8D] text-black" : ""}
-        />
-        <hr className="w-full opacity-25 bg-[#BCB59F]" />
-        <div className="actioncontainer flex my-2 ">
-          <div
-            className="left cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
-            onClick={undoFunction}
-          >
-            <ChevronLeft size={30} />
-          </div>
-          <div
-            className="right cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
-            onClick={redoFunction}
-          >
-            <ChevronRight size={30} />
-          </div>
-        </div>
-        <hr className="w-full opacity-25 bg-[#BCB59F]" />
-        <div
-          className="downloadcontainer flex flex-col justify-center items-center p-3"
-          typeof="button"
+      {isMobile && (
+        <button
+          onClick={() => setShowTools(!showTools)}
+          className="absolute top-2 left-2 z-50 bg-toolscolor p-2 rounded-full"
         >
-          <Download />
-          {image === "" ? (
-            <>
-              <label
-                className="text-sm text-center cursor-pointer"
-                onClick={GetImageFunction}
-              >
-                Save Image
-              </label>
-            </>
-          ) : (
-            <a
-              className="cursor-pointer text-sm"
-              download="save.png"
-              href={image}
-              onClick={() => setImage("")}
+          <Menu size={24} />
+        </button>
+      )}
+      {(!isMobile || showTools) && (
+        <section className="absolute top-10 left-10 w-20 z-10 rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
+          <ToolsContainer
+            icon={PenBoxIcon}
+            label="Pen"
+            onClick={StrokeFunction}
+            value="pen"
+            className={activeTool === "pen" ? "bg-[#DBEA8D] text-black" : ""}
+          />
+          <hr className="w-full opacity-25 bg-[#BCB59F]" />
+          <ToolsContainer
+            icon={EraserIcon}
+            label="Erase"
+            onClick={EraseCanvasFunction}
+            value="eraser"
+            className={activeTool === "eraser" ? "bg-[#DBEA8D] text-black" : ""}
+          />
+          <hr className="w-full opacity-25 bg-[#BCB59F]" />
+          <ToolsContainer
+            icon={LucideRemoveFormatting}
+            label="Reset"
+            onClick={ResetCanvas}
+            value="reset"
+            className={activeTool === "reset" ? "bg-[#DBEA8D] text-black" : ""}
+          />
+          <hr className="w-full opacity-25 bg-[#BCB59F]" />
+          <div className="actioncontainer flex my-2 ">
+            <div
+              className="left cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
+              onClick={undoFunction}
             >
-              Download
-            </a>
-          )}
-        </div>
-      </section>
+              <ChevronLeft size={30} />
+            </div>
+            <div
+              className="right cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
+              onClick={redoFunction}
+            >
+              <ChevronRight size={30} />
+            </div>
+          </div>
+          <hr className="w-full opacity-25 bg-[#BCB59F]" />
+          <div
+            className="downloadcontainer flex flex-col justify-center items-center p-3"
+            typeof="button"
+          >
+            <Download />
+            {image === "" ? (
+              <>
+                <label
+                  className="text-sm text-center cursor-pointer"
+                  onClick={GetImageFunction}
+                >
+                  Save Image
+                </label>
+              </>
+            ) : (
+              <a
+                className="cursor-pointer text-sm"
+                download="save.png"
+                href={image}
+                onClick={() => setImage("")}
+              >
+                Download
+              </a>
+            )}
+          </div>
+        </section>
+      )}
       <section
         className={`absolute ${
-          draweropen ? "h-fit" : "h-10"
-        } flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-40 w-max space-y-2 m-auto px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}
+          drawerOpen ? "h-fit" : "h-10"
+        } flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-40 w-max space-y-2 m-auto md:px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}
       >
         <div className="colorpickercontainer flex justify-center items-center gap-5">
           {Colors.map((color: any) => {
             return (
               <button
                 key={color.value}
-                className={`w-6 h-6 rounded-full ${
+                className={`w-5 h-5 md:w-6 md:h-6 rounded-full ${
                   activeColor === color.name ? "border-2 border-[#BCB59F]" : ""
                 }`}
                 style={{ backgroundColor: color.name }}
@@ -154,7 +179,7 @@ const DrawingArea = () => {
               />
             );
           })}
-          {!draweropen ? (
+          {!drawerOpen ? (
             <ChevronDownSquare
               onClick={() => {
                 setDrawerOpen(true);
@@ -165,7 +190,7 @@ const DrawingArea = () => {
         </div>
         <hr className="w-full opacity-25 bg-[#BCB59F]" />
         <div className="ChangerWidthContainer flex justify-center items-center gap-2 flex-col">
-          <div className="penstrokecontainer space-x-5">
+          <div className="penstrokecontainer flex justify-center px-2 gap-1 text-sm md:gap-5 md:text-lg">
             <input
               type="range"
               min="1"
@@ -175,7 +200,7 @@ const DrawingArea = () => {
             />
             <label>stroke width</label>
           </div>
-          <div className="strokecontainer space-x-5">
+          <div className="strokecontainer flex justify-center px-2 gap-1 text-sm md:gap-5 md:text-lg">
             <input
               type="range"
               min="1"
