@@ -48,7 +48,7 @@ export default function DrawingArea() {
   const [activeTool, setActiveTool] = React.useState<"pen" | "eraser">("pen")
   const [image, setImage] = React.useState("")
 
-  const canvasRef = React.useRef<ReactSketchCanvas>(null)
+  const canvasRef = React.useRef<any>(null)
 
   const handleColorClick = (color: string) => {
     setActiveColor(color)
@@ -84,10 +84,10 @@ export default function DrawingArea() {
     if (canvasRef.current) {
       canvasRef.current
         .exportImage("png")
-        .then((data) => {
+        .then((data: any) => {
           setImage(data)
         })
-        .catch((e) => {
+        .catch((e:any) => {
           console.error("Error exporting image:", e)
         })
     }
