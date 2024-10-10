@@ -1,235 +1,210 @@
-"use client";
-import * as React from "react";
-import { ReactSketchCanvas } from "react-sketch-canvas";
-import { useState, useRef } from "react";
-import ToolsContainer from "./Tools/ToolsContainer";
+'use client'
+
+import * as React from "react"
+import { ReactSketchCanvas } from "react-sketch-canvas"
+import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
 import {
-  ChevronDownSquare,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
   ChevronLeft,
   ChevronRight,
-  ChevronUpSquare,
   Download,
-  EraserIcon,
-  LucideRemoveFormatting,
-  PenBoxIcon,
+  Eraser,
   Menu,
-} from "lucide-react";
-import { Colors } from "@/constant/Colors";
+  Paintbrush,
+  Redo,
+  Trash2,
+  Undo,
+} from "lucide-react"
 
-const DrawingArea = () => {
-  const [activeColor, setActiveColor] = useState("white");
-  const [strokeWidth, setStrokeWidth] = useState(4);
-  const [earserWidth, setEraserWidth] = useState(10);
-  const [activeTool, setActiveTool] = useState("pen");
-  const [drawerOpen, setDrawerOpen] = useState(true);
-  const [image, setImage] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
-  const [showTools, setShowTools] = useState(false);
+const colors = [
+  "#000000",
+  "#ffffff",
+  "#ff0000",
+  "#00ff00",
+  "#0000ff",
+  "#ffff00",
+  "#ff00ff",
+  "#00ffff",
+]
 
-  const canvasRef = useRef<any>(null);
-  const styles = {
-    border: "0.0625rem solid #9c9c9c",
-    borderRadius: `0.5rem`,
-  };
+export default function DrawingArea() {
+  const [activeColor, setActiveColor] = React.useState("#000000")
+  const [strokeWidth, setStrokeWidth] = React.useState(4)
+  const [eraserWidth, setEraserWidth] = React.useState(10)
+  const [activeTool, setActiveTool] = React.useState<"pen" | "eraser">("pen")
+  const [image, setImage] = React.useState("")
 
-  React.useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  const canvasRef = React.useRef<ReactSketchCanvas>(null)
 
   const handleColorClick = (color: string) => {
-    setActiveColor(color);
-  };
+    setActiveColor(color)
+    setActiveTool("pen")
+  }
 
-  const EraseCanvasFunction = () => {
-    canvasRef.current?.eraseMode(earserWidth);
-    setActiveTool("eraser");
-  };
+  const handleToolChange = (tool: "pen" | "eraser") => {
+    setActiveTool(tool)
+    if (canvasRef.current) {
+      canvasRef.current.eraseMode(tool === "eraser")
+    }
+  }
 
-  const StrokeFunction = () => {
-    canvasRef.current?.eraseMode(false);
-    setActiveTool("pen");
-  };
-  const ResetCanvas = () => {
-    canvasRef.current?.clearCanvas();
-    setActiveTool("reset");
-  };
+  const handleClear = () => {
+    if (canvasRef.current) {
+      canvasRef.current.clearCanvas()
+    }
+  }
 
-  const undoFunction = () => {
-    canvasRef.current?.undo();
-  };
-  const redoFunction = () => {
-    canvasRef.current?.redo();
-  };
+  const handleUndo = () => {
+    if (canvasRef.current) {
+      canvasRef.current.undo()
+    }
+  }
 
-  const GetImageFunction = () => {
-    canvasRef.current
-      ?.exportImage("png")
-      .then((dataUrl: any) => {
-        setImage(dataUrl);
-        console.log(dataUrl);
-        // Use the data URL as needed
-      })
-      .catch((error: any) => {
-        console.error(error);
-      });
-  };
+  const handleRedo = () => {
+    if (canvasRef.current) {
+      canvasRef.current.redo()
+    }
+  }
+
+  const handleSave = () => {
+    if (canvasRef.current) {
+      canvasRef.current
+        .exportImage("png")
+        .then((data) => {
+          setImage(data)
+        })
+        .catch((e) => {
+          console.error("Error exporting image:", e)
+        })
+    }
+  }
 
   return (
-    <section className="custom-coursor">
-      {isMobile && (
-        <button
-          onClick={() => setShowTools(!showTools)}
-          className="absolute top-2 left-2 z-50 bg-toolscolor p-2 rounded-full"
-        >
-          <Menu size={24} />
-        </button>
-      )}
-      {(!isMobile || showTools) && (
-        <section className="absolute top-10 left-10 w-20 z-10 rounded-md border border-[#BCB59F] flex flex-1 flex-col justify-center items-center bg-toolscolor text-[#BCB59F] overflow-hidden select-none">
-          <ToolsContainer
-            icon={PenBoxIcon}
-            label="Pen"
-            onClick={StrokeFunction}
-            value="pen"
-            className={activeTool === "pen" ? "bg-[#DBEA8D] text-black" : ""}
-          />
-          <hr className="w-full opacity-25 bg-[#BCB59F]" />
-          <ToolsContainer
-            icon={EraserIcon}
-            label="Erase"
-            onClick={EraseCanvasFunction}
-            value="eraser"
-            className={activeTool === "eraser" ? "bg-[#DBEA8D] text-black" : ""}
-          />
-          <hr className="w-full opacity-25 bg-[#BCB59F]" />
-          <ToolsContainer
-            icon={LucideRemoveFormatting}
-            label="Reset"
-            onClick={ResetCanvas}
-            value="reset"
-            className={activeTool === "reset" ? "bg-[#DBEA8D] text-black" : ""}
-          />
-          <hr className="w-full opacity-25 bg-[#BCB59F]" />
-          <div className="actioncontainer flex my-2 ">
-            <div
-              className="left cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
-              onClick={undoFunction}
-            >
-              <ChevronLeft size={30} />
-            </div>
-            <div
-              className="right cursor-pointer hover:bg-[#DBEA8D] hover:text-primary rounded-md"
-              onClick={redoFunction}
-            >
-              <ChevronRight size={30} />
-            </div>
-          </div>
-          <hr className="w-full opacity-25 bg-[#BCB59F]" />
-          <div
-            className="downloadcontainer flex flex-col justify-center items-center p-3"
-            typeof="button"
-          >
-            <Download />
-            {image === "" ? (
-              <>
-                <label
-                  className="text-sm text-center cursor-pointer"
-                  onClick={GetImageFunction}
-                >
-                  Save Image
-                </label>
-              </>
-            ) : (
-              <a
-                className="cursor-pointer text-sm"
-                download="save.png"
-                href={image}
-                onClick={() => setImage("")}
-              >
-                Download
-              </a>
-            )}
-          </div>
-        </section>
-      )}
-      <section
-        className={`absolute ${
-          drawerOpen ? "h-fit" : "h-10"
-        } flex flex-col flex-1 items-center gap-2 top-2 left-0 right-0 z-40 w-max space-y-2 m-auto md:px-5 py-2 rounded-md border border-[#BCB59F] bg-toolscolor text-[#BCB59F] overflow-hidden select-none`}
-      >
-        <div className="colorpickercontainer flex justify-center items-center gap-5">
-          {Colors.map((color: any) => {
-            return (
-              <button
-                key={color.value}
-                className={`w-5 h-5 md:w-6 md:h-6 rounded-full ${
-                  activeColor === color.name ? "border-2 border-[#BCB59F]" : ""
-                }`}
-                style={{ backgroundColor: color.name }}
-                onClick={() => handleColorClick(color.name)}
-              />
-            );
-          })}
-          {!drawerOpen ? (
-            <ChevronDownSquare
-              onClick={() => {
-                setDrawerOpen(true);
-              }}
-              className="cursor-pointer"
-            />
-          ) : null}
-        </div>
-        <hr className="w-full opacity-25 bg-[#BCB59F]" />
-        <div className="ChangerWidthContainer flex justify-center items-center gap-2 flex-col">
-          <div className="penstrokecontainer flex justify-center px-2 gap-1 text-sm md:gap-5 md:text-lg">
-            <input
-              type="range"
-              min="1"
-              max="100"
-              value={strokeWidth}
-              onChange={(e: any) => setStrokeWidth(e.target.value)}
-            />
-            <label>stroke width</label>
-          </div>
-          <div className="strokecontainer flex justify-center px-2 gap-1 text-sm md:gap-5 md:text-lg">
-            <input
-              type="range"
-              min="1"
-              max="100"
-              value={earserWidth}
-              onChange={(e: any) => setEraserWidth(e.target.value)}
-            />
-            <label>erase width</label>
-          </div>
-        </div>
-        <ChevronUpSquare
-          onClick={() => {
-            setDrawerOpen(false);
-          }}
-          className="cursor-pointer"
-        />
-      </section>
+    <div className="relative h-screen w-full bg-gray-100">
       <ReactSketchCanvas
         ref={canvasRef}
-        style={styles}
-        width="100vw"
-        height="100vh"
-        strokeWidth={strokeWidth}
-        eraserWidth={earserWidth}
+        strokeWidth={activeTool === "pen" ? strokeWidth : eraserWidth}
         strokeColor={activeColor}
-        canvasColor="bg-background"
+        canvasColor="white"
+        className="h-full w-full"
       />
-    </section>
-  );
-};
-
-export default DrawingArea;
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 transform">
+        <div className="flex items-center space-x-2 rounded-full bg-white p-2 shadow-lg">
+          <TooltipProvider>
+            {colors.map((color) => (
+              <Tooltip key={color}>
+                <TooltipTrigger asChild>
+                  <button
+                    className={`h-8 w-8 rounded-full ${
+                      activeColor === color ? "ring-2 ring-black" : ""
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => handleColorClick(color)}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{color}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </TooltipProvider>
+        </div>
+      </div>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute left-4 top-4"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left">
+          <SheetHeader>
+            <SheetTitle>Drawing Tools</SheetTitle>
+            <SheetDescription>
+              Adjust your drawing settings here.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-4 space-y-4">
+            <div>
+              <h3 className="mb-2 text-sm font-medium">Tool</h3>
+              <div className="flex space-x-2">
+                <Button
+                  variant={activeTool === "pen" ? "default" : "outline"}
+                  onClick={() => handleToolChange("pen")}
+                >
+                  <Paintbrush className="mr-2 h-4 w-4" />
+                  Pen
+                </Button>
+                <Button
+                  variant={activeTool === "eraser" ? "default" : "outline"}
+                  onClick={() => handleToolChange("eraser")}
+                >
+                  <Eraser className="mr-2 h-4 w-4" />
+                  Eraser
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h3 className="mb-2 text-sm font-medium">
+                {activeTool === "pen" ? "Stroke Width" : "Eraser Width"}
+              </h3>
+              <Slider
+                min={1}
+                max={50}
+                step={1}
+                value={[activeTool === "pen" ? strokeWidth : eraserWidth]}
+                onValueChange={(value) =>
+                  activeTool === "pen"
+                    ? setStrokeWidth(value[0])
+                    : setEraserWidth(value[0])
+                }
+              />
+            </div>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="icon" onClick={handleUndo}>
+                <Undo className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" onClick={handleRedo}>
+                <Redo className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" onClick={handleClear}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" onClick={handleSave}>
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+      {image && (
+        <div className="absolute bottom-4 right-4">
+          <a
+            href={image}
+            download="drawing.png"
+            className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+          >
+            Download Image
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}
